@@ -47,12 +47,14 @@ abstract class SimpleFlankExtension(private val project: Project) {
   abstract val shardTime: Property<Int>
   abstract val maxTestShards: Property<Int>
   abstract val parameterizedTests: Property<String>
+  abstract val outputStyle: Property<String>
 
   open fun testTargets(action: Action<in TestTargetExtension>) {
     action.execute(TestTargetExtension(testTargets))
   }
   abstract val environmentVariables: MapProperty<String, String>
   abstract val additionalFlankOptions: MapProperty<String, String>
+  abstract val additionalGcloudOptions: MapProperty<String, String>
 
   private fun defaultProjectId(file: File): String {
     val projectIdRegex = "\"project_id\": \"(.*)\"".toRegex()

@@ -118,10 +118,12 @@ fun registerFlankYamlWriter(
         maxTestShards.convention(simpleFlankExtension.maxTestShards)
         shardTime.convention(simpleFlankExtension.shardTime)
         parameterizedTests.convention(simpleFlankExtension.parameterizedTests)
+        outputStyle.convention(simpleFlankExtension.outputStyle)
         resultsHistoryName.convention(simpleFlankExtension.resultsHistoryName)
 
         environmentVariables.convention(simpleFlankExtension.environmentVariables)
         additionalFlankOptions.convention(simpleFlankExtension.additionalFlankOptions)
+        additionalGcloudOptions.convention(simpleFlankExtension.additionalGcloudOptions)
         androidExtension.defaultConfig.testInstrumentationRunnerArguments["clearPackageData"]?.let {
             simpleFlankExtension.environmentVariables.convention(mapOf("clearPackageData" to it))
         }

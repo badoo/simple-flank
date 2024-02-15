@@ -50,6 +50,7 @@ constructor(objectFactory: ObjectFactory, private val projectLayout: ProjectLayo
   @get:Input @get:Optional abstract val testTargets: ListProperty<String>
   @get:Input @get:Optional abstract val resultsHistoryName: Property<String>
   @get:Input @get:Optional abstract val parameterizedTests: Property<String>
+  @get:Input @get:Optional abstract val outputStyle: Property<String>
 
   @get:Input @get:Optional abstract val additionalGcloudOptions: MapProperty<String, String>
   @get:Input @get:Optional abstract val additionalFlankOptions: MapProperty<String, String>
@@ -162,8 +163,8 @@ flank:
   shard-time: ${shardTime.get()}
   default-test-time: 1
   use-average-test-time-for-new-tests: true
-  output-style: single
 """ +
+            optional("output-style", outputStyle, 2) +
             optional("files-to-download", filesToDownload, 2) +
             optional("keep-file-path", keepFilePath, 2) +
             optional("skip-config-validation", skipConfigValidation, 2) +
