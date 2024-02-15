@@ -32,9 +32,8 @@ constructor(objectFactory: ObjectFactory, private val projectLayout: ProjectLayo
   @get:Input abstract val useOrchestrator: Property<Boolean>
   @get:Input @get:Optional abstract val testRunnerClass: Property<String>
 
-  @get:Input
-  val maxTestShards: Property<Int> = objectFactory.property(Int::class.java).convention(40)
-  @get:Input val shardTime: Property<Int> = objectFactory.property(Int::class.java).convention(120)
+  @get:Input abstract val maxTestShards: Property<Int>
+  @get:Input abstract val shardTime: Property<Int>
 
   @get:Input @get:Optional abstract val testTimeout: Property<String>
 
@@ -49,6 +48,8 @@ constructor(objectFactory: ObjectFactory, private val projectLayout: ProjectLayo
   @get:Input @get:Optional abstract val failFast: Property<Boolean>
   @get:Input @get:Optional abstract val performanceMetrics: Property<Boolean>
   @get:Input @get:Optional abstract val testTargets: ListProperty<String>
+  @get:Input @get:Optional abstract val resultsHistoryName: Property<String>
+  @get:Input @get:Optional abstract val parameterizedTests: Property<String>
 
   @get:Input @get:Optional abstract val additionalGcloudOptions: MapProperty<String, String>
   @get:Input @get:Optional abstract val additionalFlankOptions: MapProperty<String, String>
@@ -136,7 +137,7 @@ gcloud:
         optionalValue("orientation",device.orientation,6)
     }
   }
-  results-history-name: $flankProject.$variant
+  results-history-name: ${resultsHistoryName.getOrElse("$flankProject.$variant")}
   use-orchestrator: $useOrchestrator
 """ +
             optional("timeout", testTimeout, 2) +
@@ -145,6 +146,7 @@ gcloud:
             optional("record-video", recordVideo, 2) +
             optional("num-flaky-test-attempts", numFlakyTestAttempts, 2) +
             optional("fail-fast", failFast, 2) +
+            optional("parameterized-tests", parameterizedTests, 2) +
             optional("performance-metrics", performanceMetrics, 2) +
             optional("test-targets", testTargets, 2) +
             optional("environment-variables", environmentVariables, 2) +

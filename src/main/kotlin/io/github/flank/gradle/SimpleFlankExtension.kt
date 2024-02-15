@@ -1,6 +1,5 @@
 package io.github.flank.gradle
 
-import java.io.File
 import org.gradle.api.Action
 import org.gradle.api.HasImplicitReceiver
 import org.gradle.api.Project
@@ -9,6 +8,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
+import java.io.File
 
 abstract class SimpleFlankExtension(private val project: Project) {
   val credentialsFile: RegularFileProperty =
@@ -43,10 +43,16 @@ abstract class SimpleFlankExtension(private val project: Project) {
   abstract val failFast: Property<Boolean>
   abstract val performanceMetrics: Property<Boolean>
   abstract val testTargets: ListProperty<String>
+  abstract val resultsHistoryName: Property<String>
+  abstract val shardTime: Property<Int>
+  abstract val maxTestShards: Property<Int>
+  abstract val parameterizedTests: Property<String>
+
   open fun testTargets(action: Action<in TestTargetExtension>) {
     action.execute(TestTargetExtension(testTargets))
   }
   abstract val environmentVariables: MapProperty<String, String>
+  abstract val additionalFlankOptions: MapProperty<String, String>
 
   private fun defaultProjectId(file: File): String {
     val projectIdRegex = "\"project_id\": \"(.*)\"".toRegex()

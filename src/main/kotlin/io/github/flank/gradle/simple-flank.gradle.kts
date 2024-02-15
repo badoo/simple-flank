@@ -13,6 +13,7 @@ import io.github.flank.gradle.utils.getFlankProject
 import io.github.flank.gradle.utils.getSmallAppTask
 import io.github.flank.gradle.utils.useFixedKeystore
 import io.github.flank.gradle.utils.verifyNotDefaultKeystore
+import org.gradle.configurationcache.extensions.capitalized
 
 val flankExecutable: Configuration by configurations.creating
 
@@ -39,7 +40,7 @@ plugins.withType<AppPlugin> {
           applicationExtension.buildTypes.getByName(variant.buildType!!).signingConfig?.name
       val signingConfig =
           signingConfigName?.let { applicationExtension.signingConfigs.named(it).get() }
-      tasks.named<FlankRunTask>("flankRun${variant.name.capitalize()}").configure {
+      tasks.named<FlankRunTask>("flankRun${variant.name.capitalized()}").configure {
         doFirst {
           verifyNotDefaultKeystore(
               this@configure.variant.get(), hermeticTests.getOrElse(false), logger, signingConfig)
@@ -84,39 +85,46 @@ fun registerFlankYamlWriter(
     androidExtension: CommonExtension<*, *, *, *>,
     androidTest: AndroidTest
 ): TaskProvider<FlankYmlWriterTask> =
-    tasks.register<FlankYmlWriterTask>("flankYaml${variant.name.capitalize()}") {
-      projectId.convention(simpleFlankExtension.projectId)
-      flankProject.convention(getFlankProject())
-      this@register.variant.convention(variant.name)
-      useOrchestrator.convention(
-          provider {
-            androidExtension.testOptions.execution.toUpperCase() == "ANDROIDX_TEST_ORCHESTRATOR"
-          })
+    tasks.register<FlankYmlWriterTask>("flankYaml${variant.name.capitalized()}") {
+        projectId.convention(simpleFlankExtension.projectId)
+        flankProject.convention(getFlankProject())
+        this@register.variant.convention(variant.name)
+        useOrchestrator.convention(
+            provider {
+                androidExtension.testOptions.execution.uppercase() == "ANDROIDX_TEST_ORCHESTRATOR"
+            })
 
-      testRunnerClass.convention(androidTest.instrumentationRunner)
+        testRunnerClass.convention(androidTest.instrumentationRunner)
 
-      devices.convention(
-          simpleFlankExtension.devices.orElse(
-              provider { listOf(NexusLowRes.deviceForMinSdk(variant.minSdkVersion.apiLevel)) }))
-      this.appApk.convention(appApk)
-      this.testApk.convention(testApk)
+        devices.convention(
+            simpleFlankExtension.devices.orElse(
+                provider { listOf(NexusLowRes.deviceForMinSdk(variant.minSdkVersion.apiLevel)) })
+        )
+        this.appApk.convention(appApk)
+        this.testApk.convention(testApk)
 
-      testTimeout.convention(simpleFlankExtension.testTimeout)
+        testTimeout.convention(simpleFlankExtension.testTimeout)
 
-      directoriesToPull.convention(simpleFlankExtension.directoriesToPull)
-      filesToDownload.convention(simpleFlankExtension.filesToDownload)
-      keepFilePath.convention(simpleFlankExtension.keepFilePath)
+        directoriesToPull.convention(simpleFlankExtension.directoriesToPull)
+        filesToDownload.convention(simpleFlankExtension.filesToDownload)
+        keepFilePath.convention(simpleFlankExtension.keepFilePath)
 
-      recordVideo.convention(simpleFlankExtension.recordVideo)
-      numFlakyTestAttempts.convention(simpleFlankExtension.numFlakyTestAttempts)
-      failFast.convention(simpleFlankExtension.failFast)
-      performanceMetrics.convention(simpleFlankExtension.performanceMetrics)
-      testTargets.convention(simpleFlankExtension.testTargets)
+        recordVideo.convention(simpleFlankExtension.recordVideo)
+        numFlakyTestAttempts.convention(simpleFlankExtension.numFlakyTestAttempts)
+        failFast.convention(simpleFlankExtension.failFast)
+        performanceMetrics.convention(simpleFlankExtension.performanceMetrics)
+        testTargets.convention(simpleFlankExtension.testTargets)
 
-      environmentVariables.convention(simpleFlankExtension.environmentVariables)
-      androidExtension.defaultConfig.testInstrumentationRunnerArguments["clearPackageData"]?.let {
-        simpleFlankExtension.environmentVariables.convention(mapOf("clearPackageData" to it))
-      }
+        maxTestShards.convention(simpleFlankExtension.maxTestShards)
+        shardTime.convention(simpleFlankExtension.shardTime)
+        parameterizedTests.convention(simpleFlankExtension.parameterizedTests)
+        resultsHistoryName.convention(simpleFlankExtension.resultsHistoryName)
+
+        environmentVariables.convention(simpleFlankExtension.environmentVariables)
+        additionalFlankOptions.convention(simpleFlankExtension.additionalFlankOptions)
+        androidExtension.defaultConfig.testInstrumentationRunnerArguments["clearPackageData"]?.let {
+            simpleFlankExtension.environmentVariables.convention(mapOf("clearPackageData" to it))
+        }
     }
 
 fun registerFlankRun(
@@ -125,7 +133,7 @@ fun registerFlankRun(
     testApk: Apk,
     flankYaml: RegularFileProperty,
 ): TaskProvider<FlankRunTask> =
-    tasks.register<FlankRunTask>("flankRun${variant.name.capitalize()}") {
+    tasks.register<FlankRunTask>("flankRun${variant.name.capitalized()}") {
       flankJarClasspath.from(flankExecutable)
 
       serviceAccountCredentials.convention(simpleFlankExtension.credentialsFile)
@@ -147,7 +155,7 @@ fun registerFlankDoctor(
     testApk: Apk,
     flankYaml: RegularFileProperty,
 ): TaskProvider<FlankDoctorTask> =
-    tasks.register<FlankDoctorTask>("flankDoctor${variant.name.capitalize()}") {
+    tasks.register<FlankDoctorTask>("flankDoctor${variant.name.capitalized()}") {
       flankJarClasspath.from(flankExecutable)
       this@register.variant.convention(variant.name)
       this.appApk.convention(appApk)
